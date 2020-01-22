@@ -1,0 +1,39 @@
+service: "nihongo-users"
+custom:
+  tableName: "users-table-${self:provider.stage}"
+
+provider:
+  name: "aws"
+  runtime: "nodejs10.x"
+  stage: "dev"
+  region: "eu-west-1"
+
+functions:
+  registerUser:
+    handler: api/userHandler.registerUser
+    events:
+      - http:
+          method: POST
+          path: /register
+          private: false
+  getUser:
+    handler: api/userHandler.getUser
+    events:
+      - http:
+          method: GET
+          path: /getUser
+          private: false
+  getAllUsers:
+    handler: api/userHandler.getAllUsers
+    events:
+      - http:
+          method: GET
+          path: /getAllUsers
+          private: false
+  deleteUser:
+    handler: api/userHandler.deleteUser
+    events:
+      - http:
+          method: POST
+          path: /deleteUser
+          private: false

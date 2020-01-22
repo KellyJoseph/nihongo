@@ -1,0 +1,39 @@
+service: "nihongo-kanji"
+custom:
+  tableName: "kanji-table-${self:provider.stage}"
+
+provider:
+  name: "aws"
+  runtime: "nodejs10.x"
+  stage: "dev"
+  region: "eu-west-1"
+
+functions:
+  postKanji:
+    handler: api/kanjiHandler.postKanji
+    events:
+      - http:
+          method: POST
+          path: /postKanji
+          private: false
+  getKanji:
+    handler: api/kanjiHandler.getKanji
+    events:
+      - http:
+          method: GET
+          path: /getKanji
+          private: false
+  getAllKanji:
+    handler: api/kanjiHandler.getAllKanji
+    events:
+      - http:
+          method: GET
+          path: /getAllUsers
+          private: false
+  deleteKanji:
+    handler: api/kanjiHandler.deleteKanji
+    events:
+      - http:
+          method: POST
+          path: /deleteKanji
+          private: false

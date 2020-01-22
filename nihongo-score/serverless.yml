@@ -1,0 +1,40 @@
+service: "nihongo-score"
+
+custom:
+  tableName: "users-table-${self:provider.stage}"
+
+provider:
+  name: "aws"
+  runtime: "nodejs10.x"
+  stage: "dev"
+  region: "eu-west-1"
+
+functions:
+  postScore:
+    handler: api/scoreHandler.postScore
+    events:
+      - http:
+          method: POST
+          path: /postScore
+          private: false
+  getUser:
+    handler: api/scoreHandler.getScore
+    events:
+      - http:
+          method: GET
+          path: /getScore
+          private: false
+  getAllScores:
+    handler: api/scoreHandler.getAllScores
+    events:
+      - http:
+          method: GET
+          path: /getAllScores
+          private: false
+  deleteScore:
+    handler: api/scoreHandler.deleteScore
+    events:
+      - http:
+          method: POST
+          path: /deleteScore
+          private: false
