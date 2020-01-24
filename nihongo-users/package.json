@@ -1,0 +1,16 @@
+{
+  "name": "nihongo-users",
+  "version": "1.0.0",
+  "description": "microservice for users crudl",
+  "main": "userHandler.js",
+  "dependencies": {
+    "aws-sdk": "^2.608.0",
+    "joi": "^14.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

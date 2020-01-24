@@ -16,6 +16,13 @@ functions:
           method: POST
           path: /register
           private: false
+  authenticateUser:
+    handler: api/userHandler.authenticateUser
+    events:
+      - http:
+          method: POST
+          path: /authenticate
+          private: false
   getUser:
     handler: api/userHandler.getUser
     events:
@@ -37,3 +44,23 @@ functions:
           method: POST
           path: /deleteUser
           private: false
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable
+        AttributeDefinitions:
+          - AttributeName: userId
+            AttributeType: S
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: userId
+            KeyType: HASH
+          - AttributeName: email
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
