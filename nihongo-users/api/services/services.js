@@ -30,8 +30,6 @@ module.exports = {
         return true;
       }
     });
-    console.log("isValid looks like... -=-=-=-=-=-=-=-=");
-    console.log(isValid);
     return isValid;
   }
 };
