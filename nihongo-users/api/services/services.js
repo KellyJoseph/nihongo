@@ -23,13 +23,14 @@ module.exports = {
         .required()
     });
 
-    const isValid = Joi.validate(newUser, schema, (err, value) => {
+    return true;
+
+    Joi.validate(newUser, schema, (err, value) => {
       if (err) {
-        return false;
+        return err;
       } else {
         return true;
       }
     });
-    return isValid;
   }
 };

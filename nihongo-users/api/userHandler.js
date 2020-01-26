@@ -7,25 +7,15 @@ var tableName = "usersTable";
 
 module.exports = {
   registerUser: async (event, context) => {
-    console.log("welcome to register function!!");
     const id = uuidv4();
-    console.log("welcome to register function!! 2");
-
     let body;
-
-    console.log("welcome to register function!! 3");
-
     if (event.body !== null && event.body !== undefined) {
       body = JSON.parse(event.body);
     }
 
-    console.log("welcome to register function!! 4");
-
     const isValid = await services.validateUser(body);
 
-    console.log("welcome to register function!!5");
-
-    if (1 === 1) {
+    if (isValid) {
       var params = {
         TableName: tableName,
         Item: {
@@ -36,13 +26,40 @@ module.exports = {
           password: body.password
         }
       };
-      console.log("Adding a new item...");
-      const response = await docClient.put(params).promise();
-      console.log(response);
-      /*
+
       console.log("Adding a new item...");
       console.log(" Adding params", params);
-      const result = docClient.put(params, function(err, data) {
+
+      try {
+        await docClient.put(params).promise();
+        const response = {
+          statusCode: 200,
+          body: JSON.stringify({
+            message: "createChatMessage",
+            method: event.httpMethod,
+            path: event.path,
+            query: event.queryStringParameters,
+            params: event.pathParameters,
+            body: event.body
+          })
+        };
+        return response;
+      } catch (e) {
+        const response = {
+          statusCode: e.statusCode,
+          body: JSON.stringify({
+            message: "failed to create new user",
+            method: event.httpMethod,
+            path: event.path,
+            query: event.queryStringParameters,
+            params: event.pathParameters,
+            body: event.body
+          })
+        };
+        return response;
+      }
+      /*
+      docClient.put(params, function(err, data) {
         if (err) {
           console.error(
             "Unable to add item. Error JSON:",
@@ -51,9 +68,8 @@ module.exports = {
         } else {
           console.log("Added item:", JSON.stringify(data, null, 2));
         }
-      });
-      console.log("result-=-=-=-=-=-=-=-=");
-      console.log(result);
+      }).promise();
+
       */
     }
   },
