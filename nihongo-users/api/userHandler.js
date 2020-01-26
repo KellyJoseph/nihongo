@@ -5,6 +5,10 @@ AWS.config.update({ region: "eu-west-1" });
 var docClient = new AWS.DynamoDB.DocumentClient();
 var tableName = "usersTable";
 
+//https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.03.html
+//https://www.dynamodbguide.com/secondary-indexes/
+//https://serverless.com/framework/docs/providers/aws/guide/services/
+
 module.exports = {
   registerUser: async (event, context) => {
     const id = uuidv4();
@@ -14,6 +18,9 @@ module.exports = {
     }
 
     const isValid = await services.validateUser(body);
+
+    console.log("isvalid result is...");
+    console.log(isValid);
 
     if (isValid) {
       var params = {
@@ -48,7 +55,7 @@ module.exports = {
         const response = {
           statusCode: e.statusCode,
           body: JSON.stringify({
-            message: "failed to create new user",
+            message: "failed to write new user to dynamo",
             method: event.httpMethod,
             path: event.path,
             query: event.queryStringParameters,
@@ -71,6 +78,19 @@ module.exports = {
       }).promise();
 
       */
+    } else {
+      const response = {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: "invalid user profile fields",
+          method: event.httpMethod,
+          path: event.path,
+          query: event.queryStringParameters,
+          params: event.pathParameters,
+          body: event.body
+        })
+      };
+      return response;
     }
   },
 

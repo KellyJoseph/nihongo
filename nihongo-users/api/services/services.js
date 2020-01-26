@@ -4,6 +4,8 @@ const Joi = require("joi");
 //https://scotch.io/tutorials/node-api-schema-validation-with-joi
 module.exports = {
   validateUser: async newUser => {
+    let response;
+
     const schema = Joi.object().keys({
       firstName: Joi.string()
         .alphanum()
@@ -23,14 +25,18 @@ module.exports = {
         .required()
     });
 
-    return true;
-
+    console.log("about to validate");
     Joi.validate(newUser, schema, (err, value) => {
       if (err) {
-        return err;
+        console.log("inside validate, error track");
+        console.log(err);
+        response = err;
       } else {
-        return true;
+        console.log("inside validation, validations success");
+        console.log(value);
+        response = true;
       }
     });
+    return response;
   }
 };
