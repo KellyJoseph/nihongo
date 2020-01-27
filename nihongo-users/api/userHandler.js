@@ -2,11 +2,12 @@ const uuidv4 = require("uuid/v4");
 const services = require("./services/services");
 var AWS = require("aws-sdk");
 AWS.config.update({ region: "eu-west-1" });
-var docClient = new AWS.DynamoDB.DocumentClient();
-var tableName = "usersTable";
+const docClient = new AWS.DynamoDB.DocumentClient();
+const tableName = "usersTable";
 
 //https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/GettingStarted.NodeJs.03.html
 //https://www.dynamodbguide.com/secondary-indexes/
+//https://aws.amazon.com/blogs/database/choosing-the-right-dynamodb-partition-key/
 //https://serverless.com/framework/docs/providers/aws/guide/services/
 
 module.exports = {
@@ -42,11 +43,7 @@ module.exports = {
         const response = {
           statusCode: 200,
           body: JSON.stringify({
-            message: "createChatMessage",
-            method: event.httpMethod,
-            path: event.path,
-            query: event.queryStringParameters,
-            params: event.pathParameters,
+            message: "User successfully created",
             body: event.body
           })
         };
@@ -56,38 +53,16 @@ module.exports = {
           statusCode: e.statusCode,
           body: JSON.stringify({
             message: "failed to write new user to dynamo",
-            method: event.httpMethod,
-            path: event.path,
-            query: event.queryStringParameters,
-            params: event.pathParameters,
             body: event.body
           })
         };
         return response;
       }
-      /*
-      docClient.put(params, function(err, data) {
-        if (err) {
-          console.error(
-            "Unable to add item. Error JSON:",
-            JSON.stringify(err, null, 2)
-          );
-        } else {
-          console.log("Added item:", JSON.stringify(data, null, 2));
-        }
-      }).promise();
-
-      */
     } else {
       const response = {
         statusCode: 500,
         body: JSON.stringify({
-          message: "invalid user profile fields",
-          method: event.httpMethod,
-          path: event.path,
-          query: event.queryStringParameters,
-          params: event.pathParameters,
-          body: event.body
+          message: "invalid user profile fields"
         })
       };
       return response;
@@ -98,56 +73,31 @@ module.exports = {
     const response = {
       statusCode: 200,
       body: JSON.stringify({
-        message: "createChatMessage",
-        method: event.httpMethod,
-        path: event.path,
-        query: event.queryStringParameters,
-        params: event.pathParameters,
-        body: event.body
+        message: "authenticate function invoked"
       })
     };
     return response;
   },
   getUser: async (event, context) => {
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "createChatMessage",
-        method: event.httpMethod,
-        path: event.path,
-        query: event.queryStringParameters,
-        params: event.pathParameters,
-        body: event.body
-      })
+    const params = {
+      TableName: tableName,
+      Key: {
+        userId: "56c21fc6-76ee-4357-8670-5600c74b9ba4",
+        email: "finn@gmail.com"
+      }
     };
-    return response;
+    const res = await docClient.get(params).promise();
+    const exists = !!res.Item;
+    console.log(exists);
+    console.log(res);
+    return res;
   },
+
   getAllUsers: async (event, context) => {
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "createChatMessage",
-        method: event.httpMethod,
-        path: event.path,
-        query: event.queryStringParameters,
-        params: event.pathParameters,
-        body: event.body
-      })
-    };
-    return response;
+    return message("get all users function invoked");
   },
+
   deleteUser: async (event, context) => {
-    const response = {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "createChatMessage",
-        method: event.httpMethod,
-        path: event.path,
-        query: event.queryStringParameters,
-        params: event.pathParameters,
-        body: event.body
-      })
-    };
-    return response;
+    return message("delete users function invoked");
   }
 };
