@@ -1,13 +1,11 @@
 service: "nihongo-kanji"
 custom:
   tableName: "kanji-table-${self:provider.stage}"
-
 provider:
   name: "aws"
   runtime: "nodejs10.x"
   stage: "dev"
   region: "eu-west-1"
-
 functions:
   postKanji:
     handler: api/kanjiHandler.postKanji
@@ -16,24 +14,32 @@ functions:
           method: POST
           path: /postKanji
           private: false
-  getKanji:
-    handler: api/kanjiHandler.getKanji
+  getAllN5Kanji:
+    handler: api/kanjiHandler.getAllN5Kanji
     events:
       - http:
           method: GET
-          path: /getKanji
+          path: /getAllN5Kanji
           private: false
-  getAllKanji:
-    handler: api/kanjiHandler.getAllKanji
-    events:
-      - http:
-          method: GET
-          path: /getAllUsers
-          private: false
-  deleteKanji:
-    handler: api/kanjiHandler.deleteKanji
-    events:
-      - http:
-          method: POST
-          path: /deleteKanji
-          private: false
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: kanjiTable
+        AttributeDefinitions:
+          - AttributeName: kanji
+            AttributeType: S
+          - AttributeName: grade
+            AttributeType: S
+        KeySchema:
+          - AttributeName: kanji
+            KeyType: HASH
+            # the primary can be just the partition key, i.e. the HASH key, or a combination of HASH and RANGE (partition and)
+          - AttributeName: grade
+            KeyType: RANGE
+            # RANGE = sort key
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5

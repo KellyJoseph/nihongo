@@ -74,7 +74,7 @@ module.exports = {
   },
 
   authenticateUser: async (event, context) => {
-    const body = JSON.parse(event.body);
+    const body = await JSON.parse(event.body);
     console.log("email is", body.email);
     const params = {
       TableName: tableName,
@@ -90,11 +90,15 @@ module.exports = {
       } else return false;
     };
 
-    const validationResult = await isValid(res.Item.password, body.password);
+    const validationResult = await isValid(
+      res.Item.password,
+      body.password
+    ).promise();
 
     console.log(res.Item.password);
+    console.log(res);
     const response = {
-      statusCode: 200,
+      statusCode: res.statusCode,
       body: JSON.stringify({
         message: "get user success",
         body: `${res.Item.password} vs ${body.password}, password match: ${validationResult}`
