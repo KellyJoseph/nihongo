@@ -28,7 +28,7 @@ functions:
     events:
       - http:
           method: GET
-          path: /getUser
+          path: /getUser/{email}
           private: false
   getAllUsers:
     handler: api/userHandler.getAllUsers
@@ -41,7 +41,7 @@ functions:
     handler: api/userHandler.deleteUser
     events:
       - http:
-          method: POST
+          method: DELETE
           path: /deleteUser
           private: false
 
@@ -59,8 +59,33 @@ resources:
         KeySchema:
           - AttributeName: userId
             KeyType: HASH
+            # the primary can be just the partition key, i.e. the HASH key, or a combination of HASH and RANGE (partition and)
           - AttributeName: email
             KeyType: RANGE
+            # RANGE = sort key
+        ProvisionedThroughput:
+          ReadCapacityUnits: 5
+          WriteCapacityUnits: 5
+        #GlobalSecondaryIndexes:
+        #  - IndexName: usersByEmail
+        #    KeySchema:
+        #      - AttributeName: email
+        #        KeyType: Hash
+        #    Projection:
+        #      ProjectionType: ALL
+        #    ProvisionedThroughput:
+        #      ReadCapacityUnits: 5
+        #      WriteCapacityUnits: 5
+    usersTable2:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: usersTable2
+        AttributeDefinitions:
+          - AttributeName: email
+            AttributeType: S
+        KeySchema:
+          - AttributeName: email
+            KeyType: HASH
         ProvisionedThroughput:
           ReadCapacityUnits: 5
           WriteCapacityUnits: 5
